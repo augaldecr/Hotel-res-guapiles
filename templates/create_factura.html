@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<fieldset>
+		<script src="https://code.jquery.com/jquery-2.1.3.min.js" ></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js" ></script>
+
+<script>
+  $('.add-registro').click(function(ev){
+    ev.preventDefault();
+    var count = $('.registros').children().length;
+    var tmplMarkup = $('#registro-template').html();
+    var compiledTmpl = _.template(tmplMarkup, { id : count });
+    $('div.registros').append(compiledTmpl);
+    // update form count
+    $('#id_registros-TOTAL_FORMS').attr('value', count+1);
+  });
+</script>
+
+<h1>Añadir un Pedido y registros</h1>
+
+<form class="form-horizontal form-inline" method="post">
+  {% csrf_token %}
+  <legend>Detalle de pedido</legend>
+  {{ form }}
+  {{ formset.management_form }}
+  <legend>registros</legend>
+  <div class="registros">
+    {% for registro_form in formset %}
+      <div id="registro-{{ forloop.counter0 }}">
+        {{ registro_form }}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="form-actions">
+     <a href="#" class="btn btn-info add-registro">Añadir registro</a>
+     <button type="submit" class="btn btn-primary">Crear evento</button>
+   </div>
+ </form>
+
+<script type="text/html" id="registro-template">
+  <div id="registro-<%= id %>">
+    <label for="id_registros-<%= id %>-cantidad">Cantidad:</label>
+    <input id="id_registros-<%= id %>-cantidad" type="text" name="registros-<%= id %>-cantidad" maxlength="100">
+    <label for="id_registros-<%= id %>-libro">Libro:</label>
+    <input id="id_registros-<%= id %>-libro" type="text" name="registros-<%= id %>-libro" maxlength="100">
+    <input type="hidden" name="registros-<%= id %>-factura" id="id_registros-<%= id %>-factura">
+    <input type="hidden" name="registros-<%= id %>-id" id="id_registros-<%= id %>-id">
+  </div>
+</script>
+</fieldset>
+</body>
+</html>
